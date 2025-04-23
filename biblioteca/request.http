@@ -1,0 +1,27 @@
+### CREAR LIBRO 
+POST http://127.0.0.1:8000/libros/
+Content-Type: application/json
+
+{
+    "id": 1,
+    "titulo": "El Principito",
+    "autor": "Antoine de Saint-Exupéry",
+    "anio": 1943,
+    "genero": "Ficción"
+}
+###
+
+###OBTENER TODOS LOS LIBROS
+GET http://127.0.0.1:8000/libros
+Content-Type: application/json
+###
+
+### OBTENER LIBRO POR ID
+GET http://127.0.0.1:8000/libros/1
+Content-Type: application/json
+###
+
+### BORRAR LIBRO POR ID
+DELETE http://127.0.0.1:8000/libros/1
+Content-Type: application/json
+###
