@@ -25,3 +25,27 @@ Content-Type: application/json
 DELETE http://127.0.0.1:8000/libros/1
 Content-Type: application/json
 ###
+
+
+### REGISTRAR USUARIO
+POST http://127.0.0.1:8000/usuarios/
+Content-Type: application/json
+
+{
+    "id": 111,
+    "nombre": "johndoe",
+    "contrasena": "password123",
+    "rol": "admin",
+    "status": "activo"
+}
+###
+
+### INICIAR SESIÓN
+POST http://127.0.0.1:8000/usuarios/login/
+Content-Type: application/json
+
+{
+    "id":111,
+    "contrasena": "password123"
+}
+###
