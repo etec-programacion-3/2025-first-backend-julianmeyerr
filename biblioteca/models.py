@@ -12,7 +12,7 @@ class Usuario(BaseModel):
     nombre: str
     contrasena: str
     rol: str
-    status: str
+    token: int = None
 
 class IniciarSesion(BaseModel):
     id: int

@@ -1,21 +1,26 @@
 from models import Libro, Usuario, IniciarSesion
 from fastapi import FastAPI
+import random
 
 app=FastAPI()
 
 libros_db = []
 usuarios_db = []
-rol = str("invitado")
 
 ### CREAR LIBRO
-@app.post("/libros/",response_model=Libro)
-def crear_libro(nuevo_libro:Libro):
-    libros_db.append(nuevo_libro)
-    return nuevo_libro
+@app.post("/libros/{token}",response_model=Libro)
+def crear_libro(nuevo_libro:Libro,token:int):
+    for x in usuarios_db:
+        if x.token == token:
+            if x.rol == "admin":
+                libros_db.append(nuevo_libro)
+                return nuevo_libro
+            return {"ERROR" : "No tiene permisos para crear libros"}
+    return {"ERROR" : "Token inválido"}
 ###
 
 ### OBTENER TODOS LOS LIBROS
-@app.get("/libros/",response_model=list[Libro])
+@app.get("/libros",response_model=list[Libro])
 def obtener_libros():
     return libros_db
 ###
@@ -30,18 +35,25 @@ def obtener_libro(libro_id: int):
 ###
 
 ### BORRAR LIBRO
-@app.delete("/libros/{libro_id}")
-def eliminar_libro(libro_id: int):
-    for x in libros_db:
-        if x.id == libro_id:
-            libros_db.remove(x)
-            return {"Mensaje" : "Libro eliminado"}
-    return {"ERROR" : "Libro no encontrado"}
+@app.delete("/libros/{libro_id}/{token}")
+def eliminar_libro(libro_id: int,token:int):
+    for x in usuarios_db:
+        if x.token == token:
+            if x.rol == "admin":
+                
+                for x in libros_db:
+                    if x.id == libro_id:
+                        libros_db.remove(x)
+                        return {"Mensaje" : "Libro eliminado"}
+                return {"ERROR" : "Libro no encontrado"}
+            
+            return {"ERROR" : "No tiene permisos para eliminar libros"}
+    return {"ERROR" : "Token inválido"}
 ###
 
 
 ###REGISTRAR USUARIO
-@app.post("/usuarios/",response_model=Usuario)
+@app.post("/usuarios",response_model=Usuario)
 def registrar_usuario(nuevo_usuario:Usuario):
     usuarios_db.append(nuevo_usuario)
     return nuevo_usuario
@@ -53,8 +65,32 @@ def iniciar_sesion(usuario:IniciarSesion):
     for x in usuarios_db:
         if x.id == usuario.id:
             if x.contrasena == usuario.contrasena:
-                rol= x.rol
-                return {"Mensaje" : "Inicio de sesión exitoso"}
+                x.token = random.randint(100, 999)
+                return {"Mensaje" : "Inicio de sesión exitoso\nSu token es: " + str(x.token)}
             return {"ERROR" : "Contraseña incorrecta"}
     return {"ERROR" : "Usuario no encontrado"}
 ###
+
+### OBTENER TODOS LOS USUARIOS
+@app.get("/usuarios/{token}",response_model=list[Usuario])
+def obtener_usuarios(token:int):
+    for x in usuarios_db:
+        if x.token == token:
+            if x.rol == "admin":
+                return usuarios_db
+            return {"ERROR" : "No tiene permisos para ver usuarios"}
+    return {"ERROR" : "Token inválido"}
+###
+
+### OBTENER USUARIO POR ID
+@app.get("/usuarios/{usuario_id}/{token}",response_model=Usuario)
+def obtener_usuario(usuario_id: int,token:int):
+    for x in usuarios_db:
+        if x.token == token:
+            if x.rol == "admin":
+                for y in usuarios_db:
+                    if y.id == usuario_id:
+                        return y
+                return {"ERROR" : "Usuario no encontrada"}
+            return {"ERROR" : "No tiene permisos para ver usuarios"}
+    return {"ERROR" : "Token inválido"}
