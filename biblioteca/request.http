@@ -1,0 +1,76 @@
+### CREAR LIBRO 
+POST http://127.0.0.1:8000/libros/
+Content-Type: application/json
+
+{
+    "id": 1,
+    "titulo": "El Principito",
+    "autor": "Antoine de Saint-Exupéry",
+    "anio": 1943,
+    "genero": "Ficción"
+}
+###
+
+###OBTENER TODOS LOS LIBROS
+GET http://127.0.0.1:8000/libros
+Content-Type: application/json
+###
+
+### OBTENER LIBRO POR ID
+GET http://127.0.0.1:8000/libros/1
+Content-Type: application/json
+###
+
+### BORRAR LIBRO POR ID
+DELETE http://127.0.0.1:8000/libros/1/
+Content-Type: application/json
+###
+
+###################################USUARIOS####################################
+
+### REGISTRAR USUARIO
+POST http://127.0.0.1:8000/usuarios
+Content-Type: application/json
+
+{
+    "id": 111,
+    "nombre": "johndoe",
+    "contrasena": "password123",
+    "rol": "admin"
+}
+###
+POST http://127.0.0.1:8000/usuarios
+Content-Type: application/json
+
+{
+    "id": 112,
+    "nombre": "janedoe",
+    "contrasena": "password123",
+    "rol": "lector"
+}
+###
+
+### INICIAR SESIÓN
+POST http://127.0.0.1:8000/usuarios/login
+Content-Type: application/json
+
+{
+    "id":111,
+    "contrasena": "password123"
+}
+###
+
+### CERRAR SESIÓN
+GET http://127.0.0.1:8000/usuarios/logout/
+Content-Type: application/json
+###
+
+### OBTENER TODOS LOS USUARIOS
+GET http://127.0.0.1:8000/usuarios/
+Content-Type: application/json
+###
+
+### OBTENER USUARIO POR ID
+GET http://127.0.0.1:8000/usuarios/112/
+Content-Type: application/json
+###
