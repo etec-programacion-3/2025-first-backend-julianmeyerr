@@ -1,5 +1,5 @@
 ### CREAR LIBRO 
-POST http://127.0.0.1:8000/libros/
+POST http://127.0.0.1:8000/libros/100
 Content-Type: application/json
 
 {
@@ -74,3 +74,29 @@ Content-Type: application/json
 GET http://127.0.0.1:8000/usuarios/112/
 Content-Type: application/json
 ###
+
+
+####################################PRESTAMOS####################################
+### CREAR PRESTAMO
+GET http://127.0.0.1:8000/prestamos/nuevo/1/100
+Content-Type: application/json
+###
+
+### OBTENER TODOS LOS PRESTAMOS
+GET http://127.0.0.1:8000/prestamos
+Content-Type: application/json
+###
+
+### OBTENER PRESTAMO POR ID
+GET http://127.0.0.1:8000/prestamos/0
+Content-Type: application/json
+###
+
+### DEVOLVER LIBRO
+GET http://127.0.0.1:8000/prestamos/devolver/1/100
+Content-Type: application/json
+###
+
+### OBTENER HISTORIAL DE PRESTAMOS
+GET http://127.0.0.1:8000/prestamos/hist
+Content-Type: application/json

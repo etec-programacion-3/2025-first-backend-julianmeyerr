@@ -17,3 +17,9 @@ class Usuario(BaseModel):
 class IniciarSesion(BaseModel):
     id: int
     contrasena: str
+
+class Prestamo(BaseModel):
+    id: int
+    libro_id: int
+    usuario_id: int
+    devuelto : bool
