@@ -13,6 +13,7 @@ class Usuario(BaseModel):
     contrasena: str
     rol: str
     token: int = None
+    hist_prest : list = []
 
 class IniciarSesion(BaseModel):
     id: int

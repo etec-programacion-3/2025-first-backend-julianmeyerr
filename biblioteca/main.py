@@ -6,7 +6,7 @@ app=FastAPI()
 
 libros_db = []
 usuarios_db = []
-prestamos_db = [[],[]]
+prestamos_db = []
 
 
 ### CREAR LIBRO
@@ -124,56 +124,53 @@ def obtener_usuario(usuario_id: int,token:int):
 ###PRESTAMO DE LIBRO 
 @app.get("/prestamos/nuevo/{libro_id}/{token}",response_model=Prestamo | str) 
 def prestar_libro(libro_id:int,token:int):
-    for x in prestamos_db[0]:
+    for x in prestamos_db:
         if x.libro_id == libro_id:
             return "El libro ya fue prestado"
     for y in usuarios_db:
         if y.token == token:
             id_usuario = y.id
     
-    prestamos_db[0].append(Prestamo(id=len(prestamos_db[0])+len(prestamos_db[1]), libro_id=libro_id, usuario_id=id_usuario, devuelto=False))
-    return prestamos_db[0][-1]
+    prestamos_db.append(Prestamo(id=len(prestamos_db)+1, libro_id=libro_id, usuario_id=id_usuario, devuelto=False))
+    return prestamos_db[-1]
 ###
 
 ###OBTENER TODOS LOS PRESTAMOS ACTIVOS
 @app.get("/prestamos",response_model=list[Prestamo])
 def obtener_prestamos():
-    return prestamos_db[0]
+    return prestamos_db
 ###
 
 ###OBTENER PRESTAMO POR ID  
 @app.get("/prestamos/{prestamo_id}",response_model=Prestamo)
 def obtener_prestamo(prestamo_id:int):
-    for y in prestamos_db:
-        for x in y:
-            if x.id == prestamo_id:
-                return x
+    for x in prestamos_db:
+        if x.id == prestamo_id:
+            return x
     raise HTTPException(status_code=404, detail="Prestamo no encontrado")
 ###
 
 ###DEVOLVER LIBRO
 @app.get("/prestamos/devolver/{libro_id}/{token}",response_model=str)
 def devolver_libro(libro_id:int,token:int):
-    for y in usuarios_db:
-        if y.token == token:
-            id_usuario = y.id
-            break
-    else:
-        raise HTTPException(status_code=401, detail="Token inválido")
-    for x in prestamos_db[0]:
-        if x.libro_id == libro_id:
-            if x.usuario_id == id_usuario:
-                x.devuelto = True
-                prestamos_db[1].append(x)
-                prestamos_db[0].remove(x)
-                return "Libro devuelto"
-            else:
-                raise HTTPException(status_code=403, detail="Usted no saco el prestamo")
-    raise HTTPException(status_code=404, detail="Prestamo no encontrado")
+    for x in usuarios_db:
+        if x.token == token:
+            for y in prestamos_db:
+                if y.libro_id == libro_id:
+                    if y.usuario_id == x.id:
+                        y.devuelto = True
+                        x.hist_prest.append(y)
+                        prestamos_db.remove(y)
+                        return "Libro devuelto"
+                    else:
+                        raise HTTPException(status_code=403, detail="Usted no saco el prestamo")
+                raise HTTPException(status_code=404, detail="Prestamo no encontrado")
 ###
 
-### OBTENER HISTORIAL DE PRESTAMOS
-@app.get("/prestamos/hist",response_model=list[Prestamo])
-def obtener_prestamos():
-    return prestamos_db[1]
+### VER HISTORIAL DE PRESTAMOS
+@app.get("/prestamos/hist/{id_usuario}",response_model=list[Prestamo])
+def ver_historial(id_usuario:int):
+    for x  in usuarios_db:
+        if x.id == id_usuario:
+            return x.hist_prest
 ###
